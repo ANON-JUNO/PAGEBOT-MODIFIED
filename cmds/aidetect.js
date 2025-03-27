@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { sendMessage } = require('../handles/message'); // Adjust the path as necessary
+const { sendMessage } = require('../handles/message');
 
 module.exports = {
   name: 'detect',
@@ -12,15 +12,11 @@ module.exports = {
       const apiUrl = `https://kaiz-apis.gleeze.com/api/aidetector-v2?q=${encodeURIComponent(prompt)}`;
       const response = await axios.get(apiUrl);
       const { ai, human, message } = response.data;
-
-      
-      const fullResponse = `AI Generated: ${ai}\nHuman Generated: ${human}\nMessage: ${message}`;
-
-      
+      const fullResponse = `AI Generated: ${ai} Human Generated: ${human} Message: ${message}`;
       await sendResponseInChunks(senderId, fullResponse, pageAccessToken);
     } catch (error) {
       console.error('Error calling AI Detection API:', error);
-      await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
+      await sendMessage(senderId, { text: 'I am sorry, but there was an error processing your request.' }, pageAccessToken);
     }
   }
 };
@@ -41,7 +37,6 @@ function splitMessageIntoChunks(message, chunkSize) {
   const chunks = [];
   let chunk = '';
   const words = message.split(' ');
-
   for (const word of words) {
     if ((chunk + word).length > chunkSize) {
       chunks.push(chunk.trim());
@@ -49,10 +44,8 @@ function splitMessageIntoChunks(message, chunkSize) {
     }
     chunk += `${word} `;
   }
-
   if (chunk) {
     chunks.push(chunk.trim());
   }
-
   return chunks;
 }
