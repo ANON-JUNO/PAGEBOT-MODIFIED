@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { sendMessage } = require('../handles/message'); // Ensure the path is correct
+const { sendMessage } = require('../handles/message');
 
 module.exports = {
   name: 'chords',
@@ -16,25 +16,18 @@ module.exports = {
 
       if (result && result.chords) {
         const chordsMessage = `Title: ${result.title}\nArtist: ${result.artist}\nKey: ${result.key}\n\n${result.chords}`;
-
-        
         await sendResponseInChunks(senderId, chordsMessage, pageAccessToken);
-
-        
         if (result.url) {
-          await sendMessage(senderId, { text: `You can also view the chords here: ${result.url}` }, pageAccessToken);
+          await sendMessage(senderId, { text: `View the chords here: ${result.url}` }, pageAccessToken);
         }
       } else {
-        console.error('Error: No chords found in the response.');
-        await sendMessage(senderId, { text: 'Sorry, no chords were found for your query.' }, pageAccessToken);
+        await sendMessage(senderId, { text: 'No chords found for this song.' }, pageAccessToken);
       }
     } catch (error) {
-      console.error('Error calling Chords API:', error);
-      await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
+      await sendMessage(senderId, { text: 'An error occurred while fetching the chords. Please try again later.' }, pageAccessToken);
     }
   }
 };
-
 
 async function sendResponseInChunks(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
@@ -47,7 +40,6 @@ async function sendResponseInChunks(senderId, text, pageAccessToken) {
     await sendMessage(senderId, { text }, pageAccessToken);
   }
 }
-
 
 function splitMessageIntoChunks(message, chunkSize) {
   const chunks = [];
