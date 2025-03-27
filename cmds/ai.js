@@ -16,8 +16,8 @@ module.exports = {
 
     const senderId = event.sender.id;
     const userPrompt = args.join(" ");
-    const repliedMessage = event.message.reply_to?.message || ""; // Get the replied message content
-    const finalPrompt = repliedMessage ? `${repliedMessage} ${userPrompt}`.trim() : userPrompt; // Combine reply + user input
+    const repliedMessage = event.message.reply_to?.message || "";
+    const finalPrompt = repliedMessage ? `${repliedMessage} ${userPrompt}`.trim() : userPrompt;
 
     if (!finalPrompt) {
       return sendMessage(bot, { text: "Please enter your question or reply with an image to analyze." }, authToken);
@@ -27,20 +27,15 @@ module.exports = {
       const imageUrl = await extractImageUrl(event, authToken);
 
       if (imageUrl) {
-        // If an image is detected, use Gemini Vision API
         const apiUrl = `https://kaiz-apis.gleeze.com/api/gemini-vision`;
         const response = await handleImageRecognition(apiUrl, finalPrompt, imageUrl, senderId);
         const result = response.response;
-
-        const visionResponse = `🌌 𝐆𝐞𝐦𝐢𝐧𝐢 𝐀𝐧𝐚𝐥𝐲𝐬𝐢𝐬\n━━━━━━━━━━━━━━━━━━\n${result}`;
+        const visionResponse = `Gemini Analysis\n${result}`;
         sendLongMessage(bot, visionResponse, authToken);
       } else {
-        // If no image, use GPT API.  https://rest-api-bot.onrender.com/api/chatgpt?query=${encodeURIComponent(finalPrompt)}`;
         const apiUrl = `https://kaiz-apis.gleeze.com/api/gpt-3.5?q=${encodeURIComponent(finalPrompt)}`;
-        //https://rest-api-french3.onrender.com/api/clarencev2`;
         const response = await axios.get(apiUrl, finalPrompt);
         const gptMessage = response.data.response;
-
         const gptResponse = `${gptMessage}`;
         sendLongMessage(bot, gptResponse, authToken);
       }
