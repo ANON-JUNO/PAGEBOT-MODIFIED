@@ -11,8 +11,6 @@ module.exports = {
       const response = await axios.get('https://rest-api-bot.onrender.com/api/cdp');
       const { one, two } = response.data;
 
-      
-
       await sendMessage(senderId, {
         attachment: {
           type: "image",
@@ -30,15 +28,10 @@ module.exports = {
           }
         }
       }, pageAccessToken);
-
-     
-      
-      
-      
     } catch (error) {
-      console.error("nag error chat mo si owner:", error);
-      sendMessage(senderId, {
-        text: `nag error chat mo si owner. Error: ${error.message || "Unknown error"}`
+      console.error("An error occurred:", error);
+      await sendMessage(senderId, {
+        text: `An error occurred while processing your request. Please try again later.`
       }, pageAccessToken);
     }
   }
